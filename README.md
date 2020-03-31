@@ -109,3 +109,27 @@ configuration option to point to the location of the modules.
 Some companies specify in their terms of service that their code cannot be "reverse engineered".
 Debundling can definitely (depending on how you're using the code) fall under that umbrella.
 Understand what you are doing so you don't break any agreements :smile:
+
+# Fork By Yippee
+
+原作者不维护了，在使用中遇到了一些问题，所以fork了一份进行修改。
+
+- 改动点：支持注释还原 (原代码使用acorn转AST，但是试过acorn-extract-comments不支持line comment， 所以改用esprima来转AST)
+
+- 示例： 
+
+```js
+node ./src/index.js -i ${pathToInputFile} -o ${pathToOutputDirectory} -c ${pathToConfigFile}
+```
+
+- configFile示例：
+
+```
+{
+  "type": "webpack",
+  "entryPoint": 0,
+  "knownPaths": {},
+  "moduleAst": ["body", 0, "expression", "argument", "object", "arguments", 0],
+  "needComments": true
+}
+```

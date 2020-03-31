@@ -13,13 +13,28 @@ const replace = require('../extern/replace-method');
 //     "I am foo!";
 //   }
 // ])
-function webpackDecoder(moduleArrayAST, knownPaths) {
+function webpackDecoder(moduleArrayAST, knownPaths, needComments, wholeAST) {
   // Ensure that the bit of AST being passed is an array
   if (moduleArrayAST.type !== 'ArrayExpression') {
     throw new Error(`The root level IIFE didn't have an array for it's first parameter, aborting...`);
   }
 
   return moduleArrayAST.elements.map((moduleDescriptor, id) => {
+    // merge comments to each module
+    if (needComments) {
+      let moduleStart = moduleDescriptor.range[0];
+      let moduleEnd = moduleDescriptor.range[1];
+      moduleDescriptor.comments = [];
+      moduleDescriptor.tokens = wholeAST.tokens;
+      wholeAST.comments.map((comment) => {
+        let commentStart = comment.range[0];
+        let commentEnd = comment.range[1];
+        if (commentStart >= moduleStart && commentEnd <= moduleEnd) {
+          moduleDescriptor.comments.push(comment);
+        }
+      });
+    }
+
     return {
       id,
       code: moduleDescriptor,

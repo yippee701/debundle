@@ -52,6 +52,7 @@ function writeFile(filePath, contents) {
 
 function writeToDisk(files) {
   return Promise.all(files.map(({filePath, code}) => {
+
     let directory = path.dirname(filePath);
 
     // Any modules that are wrapped in a function (because they were bundled code) should be
@@ -62,9 +63,18 @@ function writeToDisk(files) {
     }
 
     try {
+
+      code = escodegen.attachComments(code, code.comments, code.tokens);
       code = escodegen.generate(
         code.type === 'Program' ? code : defaultExportData(code), // render the wrapping function's data or prepend non-function data with module.exports
-        { format: { indent: { style: '  ' } } } // 2 space indentation
+        { 
+          comment: true,
+          format: { 
+            indent: { 
+              style: '  ' 
+            } 
+          } 
+        } // 2 space indentation
       );
     } catch(e) {
       throw new Error(`* Couldn't parse ast to file for ${filePath}: ${e}`);

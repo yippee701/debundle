@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-const acorn = require('acorn');
+const esprima = require('esprima');
 const fs = require('fs');
 const path = require('path');
 const inquirer = require('inquirer');
@@ -53,9 +53,12 @@ config.replaceRequires = typeof config.replaceRequires === 'undefined' ? "inline
 // ----------------------------------------------------------------------------
 
 console.log('* Reading bundle...');
-const bundleContents = fs.readFileSync(bundleLocation);
-
-let ast = acorn.parse(bundleContents, {});
+const bundleContents = fs.readFileSync(bundleLocation, 'utf-8');
+let ast = esprima.parse(bundleContents, {
+  range: true,
+  tokens: true,
+  comment: true
+});
 
 // Get the entry point in the bundle.
 if (config.type === 'browserify' && !config.entryPoint) {
@@ -101,7 +104,7 @@ if (config.type === 'browserify') {
   modules = browserifyDecoder(iifeModules);
 } else {
   const webpackDecoder = require('./decoders/webpack');
-  modules = webpackDecoder(iifeModules, config.knownPaths);
+  modules = webpackDecoder(iifeModules, config.knownPaths, config.needComments, ast);
 }
 
 

@@ -24,6 +24,7 @@
     "arboreal": "0.0.2",
     "archy": "^1.0.0",
     "escodegen": "^1.8.1",
+    "esprima": "^4.0.1",
     "inquirer": "^3.0.1",
     "memoize": "^0.1.1",
     "minimist": "^1.2.0",
